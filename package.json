@@ -1,0 +1,24 @@
+{
+  "name": "sprint-uganda-take-home-challenge",
+  "version": "1.0.0",
+  "description": "Sprint Uganda Take Home Challenge\r Restaurant Management App that allows users to perform CRUD operations (Create, Read, Update, Delete) on restaurant details.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SolObwot/Sprint-Uganda-Take-Home-Challenge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SolObwot/Sprint-Uganda-Take-Home-Challenge/issues"
+  },
+  "homepage": "https://github.com/SolObwot/Sprint-Uganda-Take-Home-Challenge#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2"
+  }
+}
