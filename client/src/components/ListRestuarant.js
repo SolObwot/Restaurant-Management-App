@@ -1,87 +1,65 @@
 import React, { useEffect } from 'react';
-import { Fragment, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/24/outline'
-import { useFormik } from 'formik';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
+import AddRestuarant from './AddRestuarant';
+import EditRestuarant from './EditRestuarant';
 
 
 
 const ListRestuarant = () => {
 
-  const [ data , setData ] = useState([])
-  
+const [editData, setEditData] = useState(false)
 
-  const formik = useFormik({
-    initialValues: { 
-      name: "",
-      location: "",
-      cuisine_type: "" 
-    },
-    onSubmit: values => {
-      // Handle form submission
-      axios.post('http://localhost:8080/api/restuarants', values)
-        .then(response => {
-          // Handle successful response
-          console.log(response.data);
-        })
-        .catch(error => {
-          // Handle error
-          console.error(error);
-        });
-    },
-  });
+const [ data , setData ] = useState([])
+
+const [open, setOpen] = useState(false) 
+
+const [remove, setRemove] = useState(false)  
+
+const [dataToEdit, setDataToEdit] = useState(false)
+
+
+
+const cancelButtonRef = useRef(null)
+
+
+
+  const editRestaurant = (data) =>{
+    setDataToEdit(data)
+
+    setEditData(true);
+  }
+
+  const deleteRestaurant = (id) => {
+    axios.delete(`http://localhost:8080/api/restuarants/${id}`)
+      .then(response => {
+        // Handle successful deletion
+        // Update the data state variable to remove the deleted restaurant
+        
+      })
+      .catch(error => {
+        // Handle error
+        console.error(error);
+      });
+  };
+
 
   useEffect(() => {
-    // Fetch data when the component mounts
+    // Fetch company data when the component mounts to show on the table
     axios.get('http://localhost:8080/api/restuarants')
       .then(response => {
         setData(response.data);
-        // Set the fetched data into the form fields
-        formik.setValues(data);
       })
       .catch(error => {
         console.error(error);
       });
   }, []);
-
-const transactions = [
-    {
-      id: '1',
-      company: 'Chase & Co.',
-      share: 'CAC',
-      commission: '+$4.37',
-      price: '$3,509.00',
-      quantity: '12.00',
-      netAmount: '$4,397.00',
-    },
-    {
-      id: '2',
-      company: 'Chase & Co.',
-      share: 'CAC',
-      commission: '+$4.37',
-      price: '$3,509.00',
-      quantity: '12.00',
-      netAmount: '$4,397.00',
-    },
-    {
-      id: '3',
-      company: 'Chase & Co.',
-      share: 'CAC',
-      commission: '+$4.37',
-      price: '$3,509.00',
-      quantity: '12.00',
-      netAmount: '$4,397.00',
-    },
-    // More transactions...
-  ]
-
-const [open, setOpen] = useState(true)  
-
-
+  
 
  return <>
-     <div className="container mx-auto pt-10">
+      <div className="container mx-auto pt-10">
         <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex sm:items-center">
             <div className="sm:flex-auto">
@@ -94,9 +72,9 @@ const [open, setOpen] = useState(true)
             <button
                 type="button"
                 className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => setOpen(true)}
-            >
+                onClick={() => setOpen(true)}>
                 Add Restaurant
+                
             </button>
             </div>
         </div>
@@ -135,7 +113,7 @@ const [open, setOpen] = useState(true)
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                     {data.map((data) => (
-                    <tr key={data.name}>
+                    <tr key={data.id}>
                   
                         <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
                         {data.name}
@@ -143,14 +121,100 @@ const [open, setOpen] = useState(true)
                         <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{data.cuisine_type}</td>
                         <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{data.location}</td>
                         <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <a href="#" className="text-indigo-600 hover:text-indigo-900">
+                          <button
+                          type='button'
+                          onClick={()=>editRestaurant(data)}
+                          >
+                            <a href="#" className="text-indigo-600 hover:text-indigo-900">
                             Edit<span className="sr-only">, {data.name}</span>
-                        </a>
+                            </a>
+                          </button>
+                        
                         </td>
                         <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <a href="#" className="text-red-600 hover:text-red-900">
+                          <button
+                          type='button'
+                          onClick={() => setRemove(true)}
+                          ref={cancelButtonRef}
+                          >
+                            <a href="#" className="text-red-600 hover:text-red-900">
                             Delete<span className="sr-only">, {data.name}</span>
-                        </a>
+                            </a>
+
+                            
+                          </button>
+
+                          {/* Transition for Deleting a Restuarant */}
+
+                            <Transition.Root show={remove} as={Fragment}>
+                                  <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
+                                    <Transition.Child
+                                      as={Fragment}
+                                      enter="ease-out duration-300"
+                                      enterFrom="opacity-0"
+                                      enterTo="opacity-100"
+                                      leave="ease-in duration-200"
+                                      leaveFrom="opacity-100"
+                                      leaveTo="opacity-0"
+                                    >
+                                      <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                                    </Transition.Child>
+
+                                    <div className="fixed inset-0 z-10 overflow-y-auto">
+                                      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                        <Transition.Child
+                                          as={Fragment}
+                                          enter="ease-out duration-300"
+                                          enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                          enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                          leave="ease-in duration-200"
+                                          leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                          leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                        >
+                                          <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                                            <div className="sm:flex sm:items-start">
+                                              <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                                              </div>
+                                              <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                                <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                                                  Delete Restaurant
+                                                </Dialog.Title>
+                                                <div className="mt-2">
+                                                  <p className="text-sm text-gray-500">
+                                                    Are you sure you want to delete this restuarant? All of your information will be permanently removed
+                                                    forever. This action cannot be undone.
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div className="mt-5 sm:ml-10 sm:mt-4 sm:flex sm:pl-4">
+                                              <button
+                                                type="button"
+                                                className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto"
+                                                onClick={() => {
+                                                  deleteRestaurant(data.id);
+                                                  setRemove(false);
+                                                  window.location.reload();
+                                                }}
+                                              >
+                                                Delete
+                                              </button>
+                                              <button
+                                                type="button"
+                                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:ml-3 sm:mt-0 sm:w-auto"
+                                                onClick={() => setRemove(false)}
+                                                ref={cancelButtonRef}
+                                              >
+                                                Cancel
+                                              </button>
+                                            </div>
+                                          </Dialog.Panel>
+                                        </Transition.Child>
+                                      </div>
+                                    </div>
+                                  </Dialog>
+                                </Transition.Root>
                         </td>
                     </tr>
                     ))}
@@ -162,110 +226,13 @@ const [open, setOpen] = useState(true)
         </div>
      </div>
 
-     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
-                <div>
-                  <div className="mt-3 sm:mt-5">
-                    <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                     Add a Restaurant with it's details
-                    </Dialog.Title>
-                    <form onSubmit={formik.handleSubmit}>
-                        <div className="mt-2">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
-                                Restaurant Name
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                    type="name"
-                                    name="name"
-                                    id="name"
-                                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    placeholder="Restaurant Name"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.name}
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
-                                Location
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                    type="location"
-                                    name="location"
-                                    id="location"
-                                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    placeholder="Restaurant Location"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.location}
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label htmlFor="tyoe" className="block text-sm font-medium leading-6 text-gray-900">
-                                Cuisine Type
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                    type="cuisine_type"
-                                    name="cuisine_type"
-                                    id="cuisine_type"
-                                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    placeholder="Cuisine Type"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.tyoe}
-                                    />
-                                </div>
-                            </div>
-                            <div className="mt-5 sm:mt-6">
-                  <button
-                    type="submit"
-                    className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={() => setOpen(false)}
-                  >
-                    Add Restaurant
-                  </button>
-                </div>
 
-                            
-                        </div>
-                    </form>
-                    
-                  </div>
-                </div>
-                
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+
+{open && <AddRestuarant open={open} setOpen={setOpen} setList={setData} />}
+
+{editData && <EditRestuarant open={editData} setOpen={setEditData} data={dataToEdit} setList={setData} />}
+
  </>
 }
 
