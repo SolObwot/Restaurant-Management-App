@@ -15,7 +15,7 @@ Installation
 ------------
 
 This can be done this way; 
-* Local installation of all required software applications.
+* Local installation of all required software application.
 
 ### Install via Git
 
