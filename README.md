@@ -1,5 +1,5 @@
-# Sprint-Uganda-Take-Home-Challenge
-This is a Take Home Challenge for Sprint Uganda for a Restaurant Management App that allows users to perform CRUD operations (Create, Read, Update, Delete) on restaurant details.
+# Restaurant Management App
+This is a Take Home Challenge for a Restaurant Management App that allows users to perform CRUD operations (Create, Read, Update, Delete) on restaurant details.
 
 Getting Started
 ---------------
@@ -20,21 +20,21 @@ This can be done this way;
 ### Install via Git
 
 Clone the repo locally:
-1. Fork this git repo https://github.com/SolObwot/Sprint-Uganda-Take-Home-Challenge.git
+1. Fork this git repo h
 
 2. Clone the forked repo
 ```sh
-git clone https://github.com/<your-username>/Sprint-Uganda-Take-Home-Challenge.git
+git clone
 ```
 
 3. Change directory into cloned forked repo
 ```sh
-cd Sprint-Uganda-Take-Home-Challenge
+cd 
 ```
 
 4. Add remote link to the original repo
 ```sh
-git remote add upstream https://github.com/SolObwot/Sprint-Uganda-Take-Home-Challenge.git
+git remote add upstream 
 ```
 5. Check the origin and upstream endpoints
 ```sh
